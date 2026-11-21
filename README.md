@@ -50,6 +50,11 @@ claudecatalog.silver_2
 3. Run `02_validate_cdc_flow` — expects bronze row counts to match silver and the new
    booking IDs to be present in `gold_booking_insights`.
 
+## Booking Insights Dashboard
+
+<img width="1476" height="743" alt="image" src="https://github.com/user-attachments/assets/a4ff6df9-59c6-4ebf-8da9-553cc257ab30" />
+
+   
 ## Notes
 
 - Change Data Feed was enabled on the bronze tables on 2026-11-21 (table version 1);
