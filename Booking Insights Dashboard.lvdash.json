@@ -1,0 +1,481 @@
+{
+  "datasets": [
+    {
+      "name": "booking_insights",
+      "displayName": "Booking Insights",
+      "config": {
+        "version": "1.1",
+        "source": "claudecatalog.silver_2.gold_booking_insights",
+        "dimensions": [
+          {
+            "name": "Booking Date",
+            "expr": "booking_date"
+          },
+          {
+            "name": "Country",
+            "expr": "country"
+          },
+          {
+            "name": "City",
+            "expr": "city"
+          },
+          {
+            "name": "Airport",
+            "expr": "airport_name"
+          },
+          {
+            "name": "Passenger",
+            "expr": "passenger_name"
+          },
+          {
+            "name": "Gender",
+            "expr": "gender"
+          }
+        ],
+        "measures": [
+          {
+            "name": "Revenue",
+            "expr": "SUM(amount)",
+            "format": {
+              "type": "currency",
+              "currencyCode": "USD",
+              "decimalPlaces": {
+                "type": "exact",
+                "places": 2.0
+              }
+            }
+          },
+          {
+            "name": "Bookings",
+            "expr": "COUNT(booking_id)"
+          },
+          {
+            "name": "Avg Booking Value",
+            "expr": "MEASURE(`Revenue`) / MEASURE(`Bookings`)",
+            "format": {
+              "type": "currency",
+              "currencyCode": "USD",
+              "decimalPlaces": {
+                "type": "exact",
+                "places": 2.0
+              }
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "pages": [
+    {
+      "name": "bookings_overview",
+      "displayName": "Bookings Overview",
+      "layout": [
+        {
+          "widget": {
+            "name": "counter_total_revenue",
+            "queries": [
+              {
+                "name": "main",
+                "query": {
+                  "datasetName": "booking_insights",
+                  "fields": [
+                    {
+                      "name": "measure_revenue",
+                      "expression": "MEASURE(`Revenue`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "widgetType": "counter",
+              "frame": {
+                "title": "Total Revenue",
+                "showTitle": true
+              },
+              "encodings": {
+                "value": {
+                  "fieldName": "measure_revenue",
+                  "displayName": "Total Revenue",
+                  "format": {
+                    "type": "number-currency",
+                    "currencyCode": "USD",
+                    "abbreviation": "compact",
+                    "decimalPlaces": {
+                      "type": "max",
+                      "places": 1
+                    }
+                  }
+                }
+              },
+              "data": {
+                "queryName": "main"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 0,
+            "width": 4,
+            "height": 3
+          }
+        },
+        {
+          "widget": {
+            "name": "counter_total_bookings",
+            "queries": [
+              {
+                "name": "main",
+                "query": {
+                  "datasetName": "booking_insights",
+                  "fields": [
+                    {
+                      "name": "measure_bookings",
+                      "expression": "MEASURE(`Bookings`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "widgetType": "counter",
+              "frame": {
+                "title": "Total Bookings",
+                "showTitle": true
+              },
+              "encodings": {
+                "value": {
+                  "fieldName": "measure_bookings",
+                  "displayName": "Total Bookings",
+                  "format": {
+                    "type": "number-plain",
+                    "abbreviation": "compact",
+                    "decimalPlaces": {
+                      "type": "max",
+                      "places": 1
+                    }
+                  }
+                }
+              },
+              "data": {
+                "queryName": "main"
+              }
+            }
+          },
+          "position": {
+            "x": 4,
+            "y": 0,
+            "width": 4,
+            "height": 3
+          }
+        },
+        {
+          "widget": {
+            "name": "counter_avg_booking_value",
+            "queries": [
+              {
+                "name": "main",
+                "query": {
+                  "datasetName": "booking_insights",
+                  "fields": [
+                    {
+                      "name": "measure_avg_value",
+                      "expression": "MEASURE(`Avg Booking Value`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "widgetType": "counter",
+              "frame": {
+                "title": "Avg Booking Value",
+                "showTitle": true
+              },
+              "encodings": {
+                "value": {
+                  "fieldName": "measure_avg_value",
+                  "displayName": "Avg Booking Value",
+                  "format": {
+                    "type": "number-currency",
+                    "currencyCode": "USD",
+                    "abbreviation": "none",
+                    "decimalPlaces": {
+                      "type": "max",
+                      "places": 2
+                    }
+                  }
+                }
+              },
+              "data": {
+                "queryName": "main"
+              }
+            }
+          },
+          "position": {
+            "x": 8,
+            "y": 0,
+            "width": 4,
+            "height": 3
+          }
+        },
+        {
+          "widget": {
+            "name": "line_monthly_revenue",
+            "queries": [
+              {
+                "name": "main",
+                "query": {
+                  "datasetName": "booking_insights",
+                  "fields": [
+                    {
+                      "name": "month",
+                      "expression": "DATE_TRUNC('MONTH', `Booking Date`)"
+                    },
+                    {
+                      "name": "revenue",
+                      "expression": "MEASURE(`Revenue`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "widgetType": "line",
+              "frame": {
+                "title": "Monthly Revenue Trend",
+                "showTitle": true
+              },
+              "encodings": {
+                "x": {
+                  "fieldName": "month",
+                  "displayName": "Month",
+                  "scale": {
+                    "type": "temporal"
+                  }
+                },
+                "y": {
+                  "fieldName": "revenue",
+                  "displayName": "Revenue",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                }
+              },
+              "data": {
+                "queryName": "main"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 3,
+            "width": 8,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "pie_revenue_by_gender",
+            "queries": [
+              {
+                "name": "main",
+                "query": {
+                  "datasetName": "booking_insights",
+                  "fields": [
+                    {
+                      "name": "gender",
+                      "expression": "`Gender`"
+                    },
+                    {
+                      "name": "revenue",
+                      "expression": "MEASURE(`Revenue`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "widgetType": "pie",
+              "frame": {
+                "title": "Revenue by Gender",
+                "showTitle": true
+              },
+              "encodings": {
+                "angle": {
+                  "fieldName": "revenue",
+                  "displayName": "Revenue",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "color": {
+                  "fieldName": "gender",
+                  "displayName": "Gender",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                }
+              },
+              "data": {
+                "queryName": "main"
+              }
+            }
+          },
+          "position": {
+            "x": 8,
+            "y": 3,
+            "width": 4,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "bar_top_airports",
+            "queries": [
+              {
+                "name": "main",
+                "query": {
+                  "datasetName": "booking_insights",
+                  "fields": [
+                    {
+                      "name": "airport",
+                      "expression": "`Airport`"
+                    },
+                    {
+                      "name": "revenue",
+                      "expression": "MEASURE(`Revenue`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "widgetType": "bar",
+              "frame": {
+                "title": "Top Airports by Revenue",
+                "showTitle": true
+              },
+              "encodings": {
+                "x": {
+                  "fieldName": "airport",
+                  "displayName": "Airport",
+                  "scale": {
+                    "type": "categorical",
+                    "categorySize": {
+                      "type": "number-of-categories",
+                      "number": 10
+                    },
+                    "sort": {
+                      "by": "measure-reversed",
+                      "measure": {
+                        "fieldName": "revenue"
+                      }
+                    }
+                  }
+                },
+                "y": {
+                  "fieldName": "revenue",
+                  "displayName": "Revenue",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                }
+              },
+              "data": {
+                "queryName": "main"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 9,
+            "width": 6,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "bar_top_passengers",
+            "queries": [
+              {
+                "name": "main",
+                "query": {
+                  "datasetName": "booking_insights",
+                  "fields": [
+                    {
+                      "name": "passenger",
+                      "expression": "`Passenger`"
+                    },
+                    {
+                      "name": "revenue",
+                      "expression": "MEASURE(`Revenue`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "widgetType": "bar",
+              "frame": {
+                "title": "Top Passengers by Revenue",
+                "showTitle": true
+              },
+              "encodings": {
+                "x": {
+                  "fieldName": "passenger",
+                  "displayName": "Passenger",
+                  "scale": {
+                    "type": "categorical",
+                    "categorySize": {
+                      "type": "number-of-categories",
+                      "number": 10
+                    },
+                    "sort": {
+                      "by": "measure-reversed",
+                      "measure": {
+                        "fieldName": "revenue"
+                      }
+                    }
+                  }
+                },
+                "y": {
+                  "fieldName": "revenue",
+                  "displayName": "Revenue",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                }
+              },
+              "data": {
+                "queryName": "main"
+              }
+            }
+          },
+          "position": {
+            "x": 6,
+            "y": 9,
+            "width": 6,
+            "height": 6
+          }
+        }
+      ],
+      "pageType": "PAGE_TYPE_CANVAS",
+      "layoutVersion": "GRID_V1"
+    }
+  ]
+}
